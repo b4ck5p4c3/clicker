@@ -72,6 +72,42 @@ static void MX_GPIO_Init(void);
 
 /* USER CODE BEGIN 0 */
 
+#define CURSOR_STEP 10
+
+static void GetPointerData(uint8_t* pbuf) {
+  static uint8_t cnt=0;
+  static uint8_t drct=0;
+  int8_t x = 0, y = 0, but = 0;
+
+  /*
+  if((cnt<40)&&(drct==0)) {
+    x=CURSOR_STEP;
+    y=CURSOR_STEP;
+    cnt++;
+  } else if (cnt>0) {
+    drct=1;
+    x=-CURSOR_STEP;
+    y=-CURSOR_STEP;
+    cnt--;
+  } else {
+    drct=0;
+  }
+  */
+
+  if(HAL_GPIO_ReadPin(CLICK_GPIO_Port, CLICK_Pin) == GPIO_PIN_RESET) {
+    but = 1;
+    HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+  } else {
+    but = 0;
+    HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+  }
+
+  pbuf[0]=but;
+  pbuf[1]=x;
+  pbuf[2]=y;
+  pbuf[3]=0;
+}
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -107,13 +143,19 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  uint8_t HID_Buffer[4];
+
   while (1)
   {
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
     HAL_Delay(100);
-    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+    // HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+
+    GetPointerData(HID_Buffer);
+    USBD_HID_SendReport(&hUsbDeviceFS, HID_Buffer, 4);
 
   }
   /* USER CODE END 3 */
@@ -192,6 +234,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
@@ -201,6 +244,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : CLICK_Pin */
+  GPIO_InitStruct.Pin = CLICK_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(CLICK_GPIO_Port, &GPIO_InitStruct);
 
 }
 
