@@ -1,0 +1,1 @@
+st-flash write build/clicker.bin 0x08000000
