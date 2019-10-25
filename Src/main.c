@@ -95,17 +95,20 @@ static void GetPointerData(uint8_t* pbuf) {
   */
 
   if(HAL_GPIO_ReadPin(CLICK_GPIO_Port, CLICK_Pin) == GPIO_PIN_RESET) {
-    but = 1;
+    pbuf[2] = 0x4f; // right arrow
+    // pbuf[2] = 0x50; // left arrow
     HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
   } else {
-    but = 0;
+    pbuf[2] = 0;
     HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
   }
 
+  /*
   pbuf[0]=but;
   pbuf[1]=x;
   pbuf[2]=y;
   pbuf[3]=0;
+  */
 }
 
 /* USER CODE END 0 */
@@ -144,7 +147,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  uint8_t HID_Buffer[4];
+  uint8_t HID_Buffer[8];
 
   while (1)
   {
@@ -155,7 +158,7 @@ int main(void)
     // HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 
     GetPointerData(HID_Buffer);
-    USBD_HID_SendReport(&hUsbDeviceFS, HID_Buffer, 4);
+    USBD_HID_SendReport(&hUsbDeviceFS, HID_Buffer, 8);
 
   }
   /* USER CODE END 3 */
