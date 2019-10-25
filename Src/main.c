@@ -94,9 +94,12 @@ static void GetPointerData(uint8_t* pbuf) {
   }
   */
 
-  if(HAL_GPIO_ReadPin(CLICK_GPIO_Port, CLICK_Pin) == GPIO_PIN_RESET) {
+  if(HAL_GPIO_ReadPin(CLICK_NEXT_GPIO_Port, CLICK_NEXT_Pin) == GPIO_PIN_RESET) {
     pbuf[2] = 0x4f; // right arrow
     // pbuf[2] = 0x50; // left arrow
+    HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+  } else if (HAL_GPIO_ReadPin(CLICK_PREV_GPIO_Port, CLICK_PREV_Pin) == GPIO_PIN_RESET) { 
+    pbuf[2] = 0x50; // left arrow
     HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
   } else {
     pbuf[2] = 0;
@@ -248,11 +251,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : CLICK_Pin */
-  GPIO_InitStruct.Pin = CLICK_Pin;
+  /*Configure GPIO pins : CLICK_PREV_Pin CLICK_NEXT_Pin */
+  GPIO_InitStruct.Pin = CLICK_PREV_Pin|CLICK_NEXT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(CLICK_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 

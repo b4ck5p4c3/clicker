@@ -58,8 +58,10 @@
 
 #define LED_Pin GPIO_PIN_13
 #define LED_GPIO_Port GPIOC
-#define CLICK_Pin GPIO_PIN_9
-#define CLICK_GPIO_Port GPIOB
+#define CLICK_PREV_Pin GPIO_PIN_8
+#define CLICK_PREV_GPIO_Port GPIOB
+#define CLICK_NEXT_Pin GPIO_PIN_9
+#define CLICK_NEXT_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
